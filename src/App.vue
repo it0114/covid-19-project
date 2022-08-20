@@ -28,6 +28,7 @@
     <!-- 滚动导航 -->
     <div class="tab-box">
       <van-tabs v-model:active="tabActive" scrollspy sticky type="card" :offset-top="44">
+        <!-- 选择地区后发生改变的数据 start -->
         <van-tab title="标题1">
           <card-box title="标题1">
             标题1
@@ -48,16 +49,17 @@
             标题1
           </card-box>
         </van-tab>
+        <!-- 选择地区后发生改变的数据 end-->
       </van-tabs>
     </div>
 
-
-    <!-- 选择地区后发生改变的数据 start -->
-
-
-    <!-- 选择地区后发生改变的数据 end-->
-
     <!-- 返回顶部 -->
+
+    <!-- 别拉了, 有底线的 -->
+    <div class="footer-box">
+      - 别拉了, 有底线的 -
+    </div>
+
   </div>
 </template>
 
@@ -74,19 +76,22 @@ import CardBox from "./components/CardBox.vue"
 // 定义数据
 const listData = useListDataStore()
 const tabActive = ref(0)  // 电梯滚动导航选中
-const cityValue = ref('杭州') // 城市选中项
+const cityValue = ref('') // 城市选中项
 const cityShowPicker = ref(false) // 选择城市弹出框
-const cityColumns = ref(['杭州', '宁波', '温州', '绍兴', '湖州', '嘉兴', '金华']) // 城市列表
+const cityColumns = ref([]) // 城市列表
 
 
 // 请求地址
 const baseURL = 'https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=statisGradeCityDetail,diseaseh5Shelf'
 
-onMounted(() => {
-  getList()
+onMounted(async () => {
+  await getList()
+  await renderCityListData()
 })
 
 // 函数方法
+
+// 初始化获取数据
 const getList = async () => {
   const res = await axios.post(baseURL)
   const data = res.data.data
@@ -94,6 +99,21 @@ const getList = async () => {
   // 1. 存储数据到 pinia 中
   listData.storageData(data)
   console.log(listData.list);
+}
+
+// 渲染城市列表
+const renderCityListData = () => {
+  let childrenList = listData.list.diseaseh5Shelf.areaTree[0].children
+
+  // 1. 清空当前的数组, 并且重新用请求回来的值赋值
+  cityColumns.value = []
+  childrenList.forEach(item => {
+    (cityColumns.value as any).push(item.name) // 遇事不决, 类型断言
+  })
+
+  // 2. 设置默认选中的值
+  cityValue.value = childrenList[0].name
+
 }
 
 
@@ -120,6 +140,7 @@ const handlePickerConfirm = (value: string) => {
   min-height: 100vh;
   height: 100%;
   background: #F6F7F8;
+  padding-bottom: 30px;
 
   .header-title {
     text-align: center;
@@ -165,6 +186,13 @@ const handlePickerConfirm = (value: string) => {
   .card-box {
     width: 95%;
     margin: 10px auto;
+  }
+
+  .footer-box{
+    font-size: 14px;
+    text-align: center;
+    color: #666;
+    padding: 20px 0;
   }
 }
 

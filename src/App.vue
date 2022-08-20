@@ -1,9 +1,13 @@
 <template>
   <div class="wrapper">
+    <!-- 标题 -->
+    <div class="header-title">
+      <h3>疫情实时大数据报告</h3>
+    </div>
     <!-- 滚动导航 -->
     <div class="tab-box">
       <van-tabs v-model:active="tabActive" scrollspy sticky type="card">
-        <van-tab v-for="index in 8" style="margin: 200px 0" :title="'选项 ' + index">
+        <van-tab v-for="index in 8" style="padding: 200px 0" :title="'选项 ' + index">
           内容 {{ index }}
         </van-tab>
       </van-tabs>
@@ -62,33 +66,51 @@ const echartsInit = () => {
 </script>
 
 <style scoped lang="less">
-
-:deep(.van-tabs__wrap) {
-  .van-tabs__nav--card {
-    margin: 0;
-    padding: 10px 0;
-    box-sizing: content-box;
-    border: none;
+.wrapper {
+  background: #F6F7F8;
+  width: 100%;
+  height: 100%;
+  .header-title{
+    text-align: center;
+    padding: 20px 0;
+    background: #278BEC;
+    h3{
+      font-size: 20px;
+      font-weight: bold;
+      color: #fff;
+    }
   }
 
-  .van-tab--card {
-    border: none;
-  }
+  :deep(.van-tabs__wrap) {
+    .van-tabs__nav--card {
+      margin: 0;
+      padding: 10px 0;
+      box-sizing: content-box;
+      border: 1px solid #E9ECF0;
+      border-right: none;
+      border-left: none;
+    }
 
-  .van-tab {
-    margin: 0 5px;
-    padding: 5px 10px;
-    box-sizing: border-box;
-    background: #EAF6FD;
-    border-radius: 4px;
-    color: #999;
-  }
+    .van-tab--card {
+      border: none;
+    }
 
-  .van-tab--active {
-    background: #3FADFB;
-    color: #fff;
+    .van-tab {
+      margin: 0 5px;
+      padding: 5px 10px;
+      box-sizing: border-box;
+      background: #EAF6FD;
+      border-radius: 4px;
+      color: #999;
+    }
+
+    .van-tab--active {
+      background: #3FADFB;
+      color: #fff;
+    }
   }
 }
+
 
 </style>
 

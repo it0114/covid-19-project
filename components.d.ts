@@ -7,7 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    CardBox: typeof import('./src/components/card-box.vue')['default']
+    CardBox: typeof import('./src/components/CardBox.vue')['default']
     VanButton: typeof import('vant/es')['Button']
     VanTab: typeof import('vant/es')['Tab']
     VanTabs: typeof import('vant/es')['Tabs']

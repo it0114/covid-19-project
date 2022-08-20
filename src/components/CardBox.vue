@@ -24,7 +24,7 @@ export default {
 
 .card-box {
   width: 100%;
-  min-height: 200px;
+  min-height: 50px;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.05);
   border-radius: 6px;
   padding: 10px;

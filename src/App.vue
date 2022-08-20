@@ -19,6 +19,7 @@
     <!-- 地区弹窗 -->
     <van-popup v-model:show="cityShowPicker" round position="bottom">
       <van-picker
+          title="选择城市"
           :columns="cityColumns"
           @cancel="cityShowPicker = false"
           @confirm="handlePickerConfirm"
@@ -29,31 +30,33 @@
     <div class="tab-box">
       <van-tabs v-model:active="tabActive" scrollspy sticky type="card" :offset-top="44">
         <!-- 选择地区后发生改变的数据 start -->
-        <van-tab title="标题1">
-          <card-box title="标题1">
-            标题1
-          </card-box>
-        </van-tab>
-        <van-tab title="标题1">
-          <card-box title="标题1">
-            标题1
-          </card-box>
-        </van-tab>
-        <van-tab title="标题1">
-          <card-box title="标题1">
-            标题1
-          </card-box>
-        </van-tab>
-        <van-tab title="标题1">
-          <card-box title="标题1">
-            标题1
+        <van-tab title="疫情数据">
+          <card-box title="疫情数据">
+            <table>
+              <thead>
+              <tr>
+                <th>地区</th>
+                <th>新增确诊</th>
+                <th>累计确诊</th>
+                <th>治愈</th>
+                <th>死亡</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="(item,index) in listData.listChildren" :key="index">
+                <td>{{ item.name }}</td>
+                <td>{{ item.today.confirm }}</td>
+                <td>{{ item.total.confirm }}</td>
+                <td>{{ item.total.heal }}</td>
+                <td>{{ item.total.dead }}</td>
+              </tr>
+              </tbody>
+            </table>
           </card-box>
         </van-tab>
         <!-- 选择地区后发生改变的数据 end-->
       </van-tabs>
     </div>
-
-    <!-- 返回顶部 -->
 
     <!-- 别拉了, 有底线的 -->
     <div class="footer-box">
@@ -97,22 +100,31 @@ const getList = async () => {
   const data = res.data.data
   // console.log(data);
   // 1. 存储数据到 pinia 中
-  listData.storageData(data)
-  console.log(listData.list);
+  listData.storageList(data)
+  // console.log(listData.list);
 }
 
 // 渲染城市列表
 const renderCityListData = () => {
   let childrenList = listData.list.diseaseh5Shelf.areaTree[0].children
 
-  // 1. 清空当前的数组, 并且重新用请求回来的值赋值
+  // 1. 清空当前的数组
   cityColumns.value = []
+  // 2. 排序 (a~z)
+  childrenList = childrenList.sort((str1, str2) => {
+    return str1.name.localeCompare(str2.name, 'zh');
+  });
+  // 3. 赋值给 城市列表
   childrenList.forEach(item => {
-    (cityColumns.value as any).push(item.name) // 遇事不决, 类型断言
+    (cityColumns.value as any).push({
+      text: item.name,
+      data: {...item}
+    }) // 遇事不决, 类型断言
   })
-
-  // 2. 设置默认选中的值
+  // 4. 设置默认选中的值
   cityValue.value = childrenList[0].name
+  let children = childrenList[0].children
+  listData.storageChildren(children)
 
 }
 
@@ -125,9 +137,17 @@ const echartsInit = () => {
 }
 
 // 点击选中城市
-const handlePickerConfirm = (value: string) => {
-  cityValue.value = value;
+const handlePickerConfirm = (value: any, index: number) => {
+  // 改变当前选中值
+  cityValue.value = value.text;
+  // 隐藏弹框
   cityShowPicker.value = false;
+  // 获取子数据
+  let children = value.data.children
+  // console.log(children);
+  // 保存子数据
+  listData.storageChildren(children)
+  // console.log(listData.listChildren);
 }
 
 </script>
@@ -188,11 +208,29 @@ const handlePickerConfirm = (value: string) => {
     margin: 10px auto;
   }
 
-  .footer-box{
+  .footer-box {
     font-size: 14px;
     text-align: center;
     color: #666;
     padding: 20px 0;
+  }
+
+  table {
+    width: 100%;
+    text-align: center;
+
+    tr, td, th {
+      border: 1px solid #ccc;
+      padding: 5px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    tbody {
+      tr:nth-child(odd) {
+        background: #f5f4f4;
+      }
+    }
   }
 }
 

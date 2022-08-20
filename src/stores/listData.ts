@@ -1,15 +1,19 @@
 import {defineStore} from 'pinia'
-import type {RootObject} from "../RootObject"
+import type {RootObject, RootObjectDiseaseh5ShelfAreaTreeChildren} from "../RootObject"
 
 
 export const useListDataStore = defineStore({
     id: 'listData',
     state: () => ({
-        list: <RootObject>{}
+        list: <RootObject>{},
+        listChildren: <RootObjectDiseaseh5ShelfAreaTreeChildren[]>[]
     }),
     actions: {
-        storageData(data: RootObject) {
+        storageList(data: RootObject) {
             this.list = data
+        },
+        storageChildren(data: any) {
+            this.listChildren = data
         }
     }
 })

@@ -4,6 +4,8 @@
     <div class="header-title">
       <h3>疫情实时大数据报告</h3>
     </div>
+    <!-- 选择地区 -->
+
     <!-- 滚动导航 -->
     <div class="tab-box">
       <van-tabs v-model:active="tabActive" scrollspy sticky type="card">
@@ -15,7 +17,6 @@
       </van-tabs>
     </div>
 
-    <!-- 选择地区 -->
 
     <!-- 选择地区后发生改变的数据 start -->
 
@@ -69,6 +70,8 @@ const echartsInit = () => {
 </script>
 
 <style scoped lang="less">
+@import "./assets/global";
+
 .wrapper {
   width: 100%;
   min-height: 100vh;
@@ -78,7 +81,7 @@ const echartsInit = () => {
   .header-title {
     text-align: center;
     padding: 20px 0;
-    background: #278BEC;
+    background: @bg-color;
 
     h3 {
       font-size: 20px;
@@ -111,7 +114,7 @@ const echartsInit = () => {
     }
 
     .van-tab--active {
-      background: #3FADFB;
+      background: @bg-color;
       color: #fff;
     }
   }

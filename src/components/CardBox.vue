@@ -20,6 +20,8 @@ export default {
 </script>
 
 <style scoped lang="less">
+@import "../assets/global";
+
 .card-box {
   width: 100%;
   min-height: 200px;
@@ -43,7 +45,7 @@ export default {
       content: "";
       width: 6px;
       height: 16px;
-      background: #4EB4FF;
+      background: @bg-color;
       margin-right: 10px;
     }
   }

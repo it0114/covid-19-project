@@ -42,16 +42,24 @@
                 <th>死亡</th>
               </tr>
               </thead>
-              <tbody>
-              <tr v-for="(item,index) in listData.listChildren" :key="index">
-                <td>{{ item.name }}</td>
-                <td>{{ item.today.confirm }}</td>
-                <td>{{ item.total.confirm }}</td>
-                <td>{{ item.total.heal }}</td>
-                <td>{{ item.total.dead }}</td>
-              </tr>
-              </tbody>
+              <transition-group tag="tbody" enter-active-class="animate__animated animate__fadeIn">
+                <!--<tbody>-->
+                <tr v-for="(item,index) in listData.listChildren" :key="item.name + index + Math.random()">
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.today.confirm }}</td>
+                  <td>{{ item.total.confirm }}</td>
+                  <td>{{ item.total.heal }}</td>
+                  <td>{{ item.total.dead }}</td>
+                </tr>
+                <!--</tbody>-->
+              </transition-group>
             </table>
+          </card-box>
+        </van-tab>
+
+        <van-tab title="疫情分析">
+          <card-box title="疫情分析">
+            test
           </card-box>
         </van-tab>
         <!-- 选择地区后发生改变的数据 end-->
@@ -75,6 +83,7 @@ import {useListDataStore} from "@/stores/listData";
 import {onMounted, ref} from "vue";
 import * as echarts from 'echarts';
 import CardBox from "./components/CardBox.vue"
+import "animate.css"
 
 // 定义数据
 const listData = useListDataStore()
@@ -224,6 +233,7 @@ const handlePickerConfirm = (value: any, index: number) => {
       padding: 5px;
       font-size: 14px;
       box-sizing: border-box;
+      white-space: nowrap;
     }
 
     tbody {

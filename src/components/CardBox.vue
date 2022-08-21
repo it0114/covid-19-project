@@ -1,6 +1,6 @@
 <template>
   <div class="card-box">
-    <div class="card-title">{{ title.title }}</div>
+    <div class="card-title">{{ title }}</div>
     <div class="card-body">
       <slot></slot>
     </div>
@@ -10,10 +10,9 @@
 <script setup>
 import {defineProps} from "vue";
 
-const title = defineProps({
-  type: String,
-  default: "自定义标题",
-})
+const props = defineProps({
+  title: String,
+});
 
 </script>
 

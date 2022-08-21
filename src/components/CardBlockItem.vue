@@ -25,7 +25,7 @@ const dataInfo = defineProps({
     default: "标题"
   },
   num: {
-    type: String || Number,
+    type: Number,
     default: 1
   },
   unit: {

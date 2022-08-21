@@ -302,7 +302,4 @@ const handlePickerConfirm = (value: any, index: number) => {
     }
   }
 }
-
-
 </style>
-

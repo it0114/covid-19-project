@@ -21,11 +21,11 @@
       <van-picker
           title="选择城市"
           :columns="cityColumns"
+          :default-index="cityDefaultAction"
           @cancel="cityShowPicker = false"
           @confirm="handlePickerConfirm"
       ></van-picker>
     </van-popup>
-
     <!-- 滚动导航 -->
     <div class="tab-box">
       <van-tabs v-model:active="tabActive" scrollspy sticky type="card" :offset-top="44">
@@ -42,30 +42,29 @@
                 <th>死亡</th>
               </tr>
               </thead>
-              <transition-group tag="tbody" enter-active-class="animate__animated animate__fadeIn">
-                <!--<tbody>-->
-                <tr v-for="(item,index) in listData.listChildren" :key="item.name + index + Math.random()">
-                  <td>{{ item.name }}</td>
-                  <td>{{ item.today.confirm }}</td>
-                  <td>{{ item.total.confirm }}</td>
-                  <td>{{ item.total.heal }}</td>
-                  <td>{{ item.total.dead }}</td>
-                </tr>
-                <!--</tbody>-->
-              </transition-group>
+              <!--<transition-group tag="tbody" enter-active-class="animate__animated animate__fadeIn">-->
+              <tbody>
+              <tr v-for="(item,index) in listData.listChildren" :key="item.name + index + Math.random()">
+                <td>{{ item.name }}</td>
+                <td>{{ item.today.confirm }}</td>
+                <td>{{ item.total.confirm }}</td>
+                <td>{{ item.total.heal }}</td>
+                <td>{{ item.total.dead }}</td>
+              </tr>
+              </tbody>
+              <!--</transition-group>-->
             </table>
           </card-box>
         </van-tab>
 
         <van-tab title="看板分析">
           <card-box title="看板分析">
-            test
+            <CardBlockItem></CardBlockItem>
           </card-box>
         </van-tab>
         <!-- 选择地区后发生改变的数据 end-->
       </van-tabs>
     </div>
-
     <!-- 别拉了, 有底线的 -->
     <div class="footer-box">
       - 别拉了, 有底线的 -
@@ -84,6 +83,7 @@ import {onMounted, ref} from "vue";
 import * as echarts from 'echarts';
 import CardBox from "./components/CardBox.vue"
 import "animate.css"
+import CardBlockItem from "./components/CardBlockItem.vue"
 
 // 定义数据
 const listData = useListDataStore()
@@ -91,7 +91,7 @@ const tabActive = ref(0)  // 电梯滚动导航选中
 const cityValue = ref('') // 城市选中项
 const cityShowPicker = ref(false) // 选择城市弹出框
 const cityColumns = ref([]) // 城市列表
-
+const cityDefaultAction = ref(0) // 默认选中
 
 // 请求地址
 const baseURL = 'https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=statisGradeCityDetail,diseaseh5Shelf'
@@ -109,7 +109,11 @@ const getList = async () => {
   const data = res.data.data
   // console.log(data);
   // 1. 存储数据到 pinia 中
-  listData.storageList(data)
+  listData.storageList(data) // 总数据
+  listData.storageChinaAdd(data.diseaseh5Shelf.chinaAdd)  // 看板新增
+  listData.storageChinaTotal(data.diseaseh5Shelf.chinaTotal) // 看板总数
+  console.log(listData.chinaAdd);
+  console.log(listData.chinaTotal);
   // console.log(listData.list);
 }
 
@@ -131,10 +135,10 @@ const renderCityListData = () => {
     }) // 遇事不决, 类型断言
   })
   // 4. 设置默认选中的值
-  cityValue.value = childrenList[0].name
-  let children = childrenList[0].children
+  cityValue.value = childrenList[6].name
+  let children = childrenList[6].children
   listData.storageChildren(children)
-
+  cityDefaultAction.value = 6
 }
 
 
@@ -162,7 +166,7 @@ const handlePickerConfirm = (value: any, index: number) => {
 </script>
 
 <style scoped lang="less">
-@import "./assets/global";
+@import "./assets/style/global";
 
 .wrapper {
   width: 100%;

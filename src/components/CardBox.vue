@@ -1,26 +1,24 @@
 <template>
   <div class="card-box">
-    <div class="card-title">{{ title }}</div>
+    <div class="card-title">{{ title.title }}</div>
     <div class="card-body">
       <slot></slot>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: "card-box",
-  props: {
-    title: {
-      type: String,
-      default: "自定义标题",
-    }
-  }
-}
+<script setup>
+import {defineProps} from "vue";
+
+const title = defineProps({
+  type: String,
+  default: "自定义标题",
+})
+
 </script>
 
 <style scoped lang="less">
-@import "../assets/global";
+@import "../assets/style/global";
 
 .card-box {
   width: 100%;

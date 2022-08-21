@@ -7,9 +7,13 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    CardBlockItem: typeof import('./src/components/CardBlockItem.vue')['default']
     CardBox: typeof import('./src/components/CardBox.vue')['default']
     VanButton: typeof import('vant/es')['Button']
     VanField: typeof import('vant/es')['Field']
+    VanGrid: typeof import('vant/es')['Grid']
+    VanGridItem: typeof import('vant/es')['GridItem']
+    VanImage: typeof import('vant/es')['Image']
     VanPicker: typeof import('vant/es')['Picker']
     VanPopup: typeof import('vant/es')['Popup']
     VanSticky: typeof import('vant/es')['Sticky']

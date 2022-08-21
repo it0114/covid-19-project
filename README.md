@@ -61,4 +61,6 @@ npm run build
 1. ts 报错 node 板块的 require 找不到 
    > 解决方法 :  
    > 在 `tsconfig.json` 的 `compilerOptions` 中添加 `"types": ["node"]`
-2. 
+2. require 引入图片在 vite 项目不可用 
+   > 解决方法 :  
+   > 改用 `new URL('../assets/images/card-block-item/test.png', import.meta.url).href`

@@ -1,13 +1,22 @@
 <template>
   <div class="card-block-item"
-       :style="{background:dataInfo.bgColor}">
+       :style="{background:bgColor}">
     <div class="left">
-      <img :src="dataInfo.icon" alt="图标">
-      <span class="text">{{ dataInfo.text }}</span>
+      <img :src="icon" alt="图标">
+      <span class="text">{{ text }}</span>
     </div>
     <div class="right">
-      <span class="num" :style="{color:dataInfo.color}">{{ dataInfo.num }}</span>
-      <span class="unit">{{ dataInfo.unit }}</span>
+      <div class="right-text">
+        <div class="right-item">
+          <span class="name"> {{ name || '总数' }}</span>
+          <span class="num" :style="{color:color}">{{ num }}</span>
+        </div>
+        <div class="right-item">
+          <span class="name"> {{ name1 || '较上日' }}</span>
+          <span class="num" :style="{color:color}">+{{ num1 }}</span>
+        </div>
+      </div>
+      <span class="unit">{{ unit || '人' }}</span>
     </div>
   </div>
 </template>
@@ -15,7 +24,7 @@
 
 import {defineProps} from "vue";
 
-const dataInfo = defineProps({
+const props = defineProps({
   icon: {
     type: String,
     default: new URL('../assets/images/card-block-item/test.png', import.meta.url).href
@@ -24,11 +33,27 @@ const dataInfo = defineProps({
     type: String,
     default: "标题"
   },
+  name: {
+    type: String,
+    default: "总数"
+  },
   num: {
     type: Number,
     default: 1
   },
   unit: {
+    type: String,
+    default: "人"
+  },
+  name1: {
+    type: String,
+    default: "较上日"
+  },
+  num1: {
+    type: Number,
+    default: 1
+  },
+  unit1: {
     type: String,
     default: "人"
   },
@@ -41,6 +66,7 @@ const dataInfo = defineProps({
     default: "#4EB4FF"
   },
 });
+
 
 </script>
 
@@ -56,6 +82,7 @@ const dataInfo = defineProps({
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 10px;
 
   img {
     width: 30px;
@@ -80,12 +107,30 @@ const dataInfo = defineProps({
     display: flex;
     align-items: center;
 
-    .num {
-      font-weight: 500;
-      font-size: 15px;
-      color: #4EB4FF;
-      letter-spacing: 0;
-      margin-right: 5px;
+    .right-item {
+      width: 120px;
+      margin: 5px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .name {
+        font-weight: 400;
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.50);
+        line-height: 12px;
+        margin-right: 5px;
+      }
+
+      .num {
+        flex: 1;
+        font-weight: 500;
+        font-size: 15px;
+        color: #4EB4FF;
+        letter-spacing: 0;
+        text-align: right;
+        margin-right: 10px;
+      }
     }
 
     .unit {
@@ -94,6 +139,8 @@ const dataInfo = defineProps({
       color: rgba(0, 0, 0, 0.50);
       line-height: 12px;
     }
+
+
   }
 
 

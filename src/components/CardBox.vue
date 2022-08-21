@@ -1,6 +1,9 @@
 <template>
   <div class="card-box">
-    <div class="card-title">{{ title }}</div>
+    <div class="card-title">
+      <span class="card-text">{{ title }}</span>
+      <span class="card-tag">{{ tag }}</span>
+    </div>
     <div class="card-body">
       <slot></slot>
     </div>
@@ -8,10 +11,11 @@
 </template>
 
 <script setup>
-import {defineProps} from "vue";
+import {defineProps, ref} from "vue";
 
 const props = defineProps({
   title: String,
+  tag: String
 });
 
 </script>
@@ -29,12 +33,27 @@ const props = defineProps({
   background: #fff;
 
   .card-title {
-    font-weight: 500;
-    font-size: 16px;
-    color: #262A30;
     line-height: 16px;
     position: relative;
-    padding-left: 20px;
+    padding-left: 15px;
+    display: flex;
+    align-items: center;
+
+    .card-text {
+      font-weight: 500;
+      font-size: 16px;
+      color: #262A30;
+      margin-right: 10px;
+    }
+
+    .card-tag {
+      font-size: 12px;
+      border: 1px solid @bg-color;
+      color: @bg-color;
+      padding:1px 5px;
+      box-sizing: border-box;
+      border-radius: 2px;
+    }
 
     &:after {
       position: absolute;

@@ -30,8 +30,17 @@
     <div class="tab-box">
       <van-tabs v-model:active="tabActive" scrollspy sticky type="card" :offset-top="44">
         <!-- 选择地区后发生改变的数据 start -->
-        <van-tab title="疫情数据">
-          <card-box title="疫情数据">
+        <van-tab title="疫情看板">
+          <card-box title="疫情看板" tag="全国">
+            <card-block-item
+                v-for="(item,index) in bulletinBoardData"
+                :key="index"
+                v-bind="item"
+            ></card-block-item>
+          </card-box>
+        </van-tab>
+        <van-tab title="疫情表格">
+          <card-box title="疫情表格" tag="省市">
             <table>
               <thead>
               <tr>
@@ -56,12 +65,6 @@
             </table>
           </card-box>
         </van-tab>
-
-        <van-tab title="看板分析">
-          <card-box title="看板分析">
-            <CardBlockItem></CardBlockItem>
-          </card-box>
-        </van-tab>
         <!-- 选择地区后发生改变的数据 end-->
       </van-tabs>
     </div>
@@ -73,7 +76,6 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 
 // 引入文件
@@ -81,8 +83,8 @@ import axios from "axios"
 import {useListDataStore} from "@/stores/listData";
 import {onMounted, ref} from "vue";
 import * as echarts from 'echarts';
-import CardBox from "./components/CardBox.vue"
 import "animate.css"
+import CardBox from "./components/CardBox.vue"
 import CardBlockItem from "./components/CardBlockItem.vue"
 
 // 定义数据
@@ -92,6 +94,7 @@ const cityValue = ref('') // 城市选中项
 const cityShowPicker = ref(false) // 选择城市弹出框
 const cityColumns = ref([]) // 城市列表
 const cityDefaultAction = ref(0) // 默认选中
+const bulletinBoardData = ref([]) // 看板数据
 
 // 请求地址
 const baseURL = 'https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=statisGradeCityDetail,diseaseh5Shelf'
@@ -99,6 +102,7 @@ const baseURL = 'https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/
 onMounted(async () => {
   await getList()
   await renderCityListData()
+  await renderBulletinBoardData()
 })
 
 // 函数方法
@@ -112,8 +116,6 @@ const getList = async () => {
   listData.storageList(data) // 总数据
   listData.storageChinaAdd(data.diseaseh5Shelf.chinaAdd)  // 看板新增
   listData.storageChinaTotal(data.diseaseh5Shelf.chinaTotal) // 看板总数
-  console.log(listData.chinaAdd);
-  console.log(listData.chinaTotal);
   // console.log(listData.list);
 }
 
@@ -141,6 +143,59 @@ const renderCityListData = () => {
   cityDefaultAction.value = 6
 }
 
+// 渲染看板数据
+const renderBulletinBoardData = () => {
+  (bulletinBoardData.value as Array<Object>) = [
+    {
+      text: '本土现有确诊',
+      icon: new URL('./assets/images/card-block-item/icon1.png', import.meta.url).href,
+      num: listData.chinaTotal.localConfirm,
+      num1: listData.chinaAdd.localConfirmH5,
+      bgColor: 'rgba(255,146,76,0.1)',
+      color: '#FF924C',
+    },
+    {
+      text: '现有确诊',
+      icon: new URL('./assets/images/card-block-item/icon2.png', import.meta.url).href,
+      num: listData.chinaTotal.nowConfirm,
+      num1: listData.chinaAdd.nowConfirm,
+      bgColor: 'rgba(64,172,251,0.1)',
+      color: '#40ACFB',
+    },
+    {
+      text: '累计确诊',
+      icon: new URL('./assets/images/card-block-item/icon3.png', import.meta.url).href,
+      num: listData.chinaTotal.confirm,
+      num1: listData.chinaAdd.confirm,
+      bgColor: 'rgba(63,210,167,0.1)',
+      color: '#3FD2A7',
+    },
+    {
+      text: '无症状感染者',
+      icon: new URL('./assets/images/card-block-item/icon4.png', import.meta.url).href,
+      num: listData.chinaTotal.noInfect,
+      num1: listData.chinaAdd.noInfect,
+      bgColor: 'rgba(36,188,185,0.1)',
+      color: '#24BCB9',
+    },
+    {
+      text: '境外输入',
+      icon: new URL('./assets/images/card-block-item/icon5.png', import.meta.url).href,
+      num: listData.chinaTotal.importedCase,
+      num1: listData.chinaAdd.importedCase,
+      bgColor: 'rgba(253,111,86,0.1)',
+      color: '#FD6F56',
+    },
+    {
+      text: '累计死亡',
+      icon: new URL('./assets/images/card-block-item/icon6.png', import.meta.url).href,
+      num: listData.chinaTotal.dead,
+      num1: listData.chinaAdd.dead,
+      bgColor: 'rgba(142,136,235,0.1)',
+      color: '#8E88EB',
+    }
+  ]
+}
 
 // 初始化 echarts
 const echartsInit = () => {

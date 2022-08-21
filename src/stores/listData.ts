@@ -4,7 +4,7 @@ import type {
     RootObjectDiseaseh5ShelfAreaTreeChildren,
     RootObjectDiseaseh5ShelfChinaAdd,
     RootObjectDiseaseh5ShelfChinaTotal
-} from "../RootObject"
+} from "@/RootObject"
 
 
 export const useListDataStore = defineStore({

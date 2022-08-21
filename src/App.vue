@@ -272,11 +272,10 @@ const chartsPieInit = () => {
           },
           emphasis: {
             show: true,
-            textStyle: {
-              fontSize: 24,
-            }
-          }
+            fontSize: 24,
+          },
         },
+
         labelLine: {
           show: false
         },

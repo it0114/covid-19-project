@@ -57,8 +57,8 @@
           </card-box>
         </van-tab>
 
-        <van-tab title="疫情分析">
-          <card-box title="疫情分析">
+        <van-tab title="看板分析">
+          <card-box title="看板分析">
             test
           </card-box>
         </van-tab>

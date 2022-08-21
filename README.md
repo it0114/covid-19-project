@@ -18,6 +18,7 @@ npm run build
 ✅ typeScript  
 ✅ echarts  
 ✅ pinia  
+✅ animate.css
 
 ### 接口地址
 
@@ -26,6 +27,7 @@ npm run build
   > https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=statisGradeCityDetail,diseaseh5Shelf
 
 ### api字段相关
+
 
 地区 name  
 新增确诊 today.confirm  
@@ -54,3 +56,9 @@ npm run build
    较上日 chindAdd.dead  
    chinaTotal.dead  
 
+
+### 重点难点
+1. ts 报错 node 板块的 require 找不到 
+   > 解决方法 :  
+   > 在 `tsconfig.json` 的 `compilerOptions` 中添加 `"types": ["node"]`
+2. 

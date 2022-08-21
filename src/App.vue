@@ -39,6 +39,11 @@
             ></card-block-item>
           </card-box>
         </van-tab>
+        <van-tab title="疫情饼图">
+          <card-box title="疫情饼图" tag="全国">
+            <div class="charts-pie"></div>
+          </card-box>
+        </van-tab>
         <van-tab title="疫情表格">
           <card-box title="疫情表格" tag="省市">
             <table>
@@ -95,6 +100,15 @@ const cityShowPicker = ref(false) // 选择城市弹出框
 const cityColumns = ref([]) // 城市列表
 const cityDefaultAction = ref(0) // 默认选中
 const bulletinBoardData = ref([]) // 看板数据
+const pieData = ref([  // 饼图数据
+  {value: 1048, name: '本土现有确诊'},
+  {value: 735, name: '现有确诊'},
+  {value: 580, name: '累计确诊'},
+  {value: 484, name: '无症状感染者'},
+  {value: 300, name: '境外输入'},
+  {value: 300, name: '累计死亡'}
+])
+let pieChart = <any>''
 
 // 请求地址
 const baseURL = 'https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=statisGradeCityDetail,diseaseh5Shelf'
@@ -103,6 +117,7 @@ onMounted(async () => {
   await getList()
   await renderCityListData()
   await renderBulletinBoardData()
+  await chartsPieInit()
 })
 
 // 函数方法
@@ -197,12 +212,114 @@ const renderBulletinBoardData = () => {
   ]
 }
 
-// 初始化 echarts
-const echartsInit = () => {
-  const myChart = echarts.init(document.querySelector('#map') as HTMLElement);
-  let option = {};
-  myChart.setOption(option);
+// 初始化饼图数据
+const chartsPieInit = () => {
+  if (pieChart !== '' && pieChart !== null && pieChart !== undefined) {
+    echarts.dispose(document.querySelector('.charts-pie') as HTMLElement);
+  }
+  pieChart = echarts.init(document.querySelector('.charts-pie') as HTMLElement);
+  let option = {
+    legend: {
+      selectedMode: false, // 是否可以隐藏饼图对应的板块
+      top: '5%',//图例距离整个容器底部的距离
+      left: 'center',//图例距离整个容器左边
+      data: ['本土现有确诊', '现有确诊', '累计确诊', '无症状感染者', '境外输入', '累计死亡'],//图例文字内容
+      itemHeight: 9,//图例图标的高度
+      itemWidth: 9,//图例图标的宽度
+      itemGap: 25,//图例图标与文字间的间距
+      icon: "circle",//设置图例图标的形状为实心圆，这个不填，默认是矩形
+      textStyle: {
+        fontSize: 12,//图例文字字体大小
+        color: '#8A90A3'//图例文字颜色
+      },
+    },
+    series: [
+      {
+        name: '疫情数据',
+        type: 'pie',
+        radius: ['50%', '70%'],
+        center: ['50%', '60%'],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 4,
+          borderColor: '#fff',
+        },
+        // 设置中间文字
+        label: {
+          show: false,
+          position: 'center',
+          formatter: '{text|{b}}\n {value|{c}人} \n {percentage|{d}%}',
+          rich: {
+            text: {
+              color: "#666",
+              fontSize: 14,
+              align: 'center',
+              verticalAlign: 'middle',
+            },
+            value: {
+              color: "#333",
+              fontSize: 18,
+              align: 'center',
+              verticalAlign: 'middle',
+              padding: 10,
+            },
+            percentage: {
+              color: "#666",
+              fontSize: 18,
+              align: 'center',
+              verticalAlign: 'middle',
+            }
+          },
+          emphasis: {
+            show: true,
+            textStyle: {
+              fontSize: 24,
+            }
+          }
+        },
+        labelLine: {
+          show: false
+        },
+        data: pieData.value
+      }
+    ]
+  };
+  pieChart.setOption(option);
+  //监听窗口变动实时渲染
+  window.addEventListener("resize", function () {
+    pieChart.resize();
+  });
+  // 饼图事件
+  getDefaultSelected(pieChart, option)
 }
+
+// 饼图事件
+const getDefaultSelected = (myChart: any, option: Object) => {
+  let index = 0;
+  myChart.dispatchAction({
+    type: 'highlight',
+    seriesIndex: 0,
+    dataIndex: 0,
+  });//默认高亮
+  myChart.on('mouseover', (e: any) => {
+    if (e.dataIndex !== index) {
+      myChart.dispatchAction({
+        type: 'downplay',
+        seriesIndex: 0,
+        dataIndex: index,
+      });
+    }
+  });
+  myChart.on('mouseout', (e: any) => {
+    index = e.dataIndex;
+    myChart.dispatchAction({
+      type: 'highlight',
+      seriesIndex: 0,
+      dataIndex: e.dataIndex,
+    });
+  });
+}
+
 
 // 点击选中城市
 const handlePickerConfirm = (value: any, index: number) => {
@@ -300,6 +417,11 @@ const handlePickerConfirm = (value: any, index: number) => {
         background: #f5f4f4;
       }
     }
+  }
+
+  .charts-pie {
+    width: 100%;
+    height: 400px;
   }
 }
 </style>

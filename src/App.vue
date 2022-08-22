@@ -28,7 +28,14 @@
     </van-popup>
     <!-- 滚动导航 -->
     <div class="tab-box">
-      <van-tabs v-model:active="tabActive" scrollspy sticky type="card" :offset-top="44">
+      <van-tabs
+          v-model:active="tabActive"
+          scrollspy
+          sticky
+          type="card"
+          :ellipsis="true"
+          :swipe-threshold="5"
+          :offset-top="44">
         <!-- 选择地区后发生改变的数据 start -->
         <van-tab title="疫情看板">
           <card-box title="疫情看板" tag="全国">
@@ -484,7 +491,7 @@ const handlePickerConfirm = (value: any, index: number) => {
   :deep(.van-tabs__wrap) {
     .van-tabs__nav--card {
       margin: 0;
-      padding: 10px 0;
+      padding: 10px 5px;
       box-sizing: content-box;
       border: 1px solid #E9ECF0;
       border-right: none;

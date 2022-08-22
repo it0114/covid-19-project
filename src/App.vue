@@ -70,6 +70,11 @@
             </table>
           </card-box>
         </van-tab>
+        <van-tab title="疫情折线图">
+          <card-box title="疫情折线图" tag="省市">
+            <div class="charts-line"></div>
+          </card-box>
+        </van-tab>
         <!-- 选择地区后发生改变的数据 end-->
       </van-tabs>
     </div>
@@ -101,7 +106,12 @@ const cityColumns = ref([]) // 城市列表
 const cityDefaultAction = ref(0) // 默认选中
 const bulletinBoardData = ref([]) // 看板数据
 const pieData = ref([]) // 饼图数据
+const lineData = ref({
+  xAxisData: [],
+  seriesData: []
+}) // 折线图数据
 let pieChart = <any>''
+let lineChart = <any>''
 
 // 请求地址
 const baseURL = 'https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=statisGradeCityDetail,diseaseh5Shelf'
@@ -111,6 +121,7 @@ onMounted(async () => {
   await renderCityListData()
   await renderBulletinBoardData()
   await renderPieData()
+  await renderLineData()
 })
 
 // 函数方法
@@ -282,10 +293,11 @@ const chartsPieInit = () => {
               verticalAlign: 'middle',
             }
           },
-          emphasis: {
+        },
+        emphasis: {
+          label: {
             show: true,
-            fontSize: 24,
-          },
+          }
         },
         labelLine: {
           show: false
@@ -327,6 +339,107 @@ const getDefaultSelected = (myChart: any, option: Object) => {
       seriesIndex: 0,
       dataIndex: e.dataIndex,
     });
+  });
+}
+
+// 渲染折线图数据
+const renderLineData = async () => {
+  lineData.value.xAxisData = []
+  lineData.value.seriesData = []
+
+  // 定义
+  let addData: never[] = []
+  let totalData: never[] = []
+  let healData: never[] = []
+  let deadData: never[] = []
+  // 标题
+  const titleArr = [
+    {name: '新增确诊', data: addData},
+    {name: '累计确诊', data: totalData},
+    {name: '治愈', data: healData},
+    {name: '死亡', data: deadData},
+  ]
+  titleArr.forEach(({name, data}) => {
+    (lineData.value.seriesData as Array<Object>).push({
+      name,
+      type: 'line',
+      // stack: 'Total',
+      data
+    })
+  })
+  listData.listChildren.forEach(item => {
+    // x轴
+    (lineData.value.xAxisData as Array<string>).push(item.name);
+    // 数据
+    (addData as Array<number>).push(item.today.confirm);
+    (totalData as Array<number>).push(item.total.confirm);
+    (healData as Array<number>).push(item.total.heal);
+    (deadData as Array<number>).push(item.total.dead);
+  })
+  await chartsLineInit()
+}
+
+// 初始化折线图
+const chartsLineInit = () => {
+  if (lineChart !== '' && lineChart !== null && lineChart !== undefined) {
+    echarts.dispose(document.querySelector('.charts-line') as HTMLElement);
+  }
+  lineChart = echarts.init(document.querySelector('.charts-line') as HTMLElement);
+  let option = {
+    color: ['#4EB4FF', '#F2CA6B', '#9ECA7F', '#DE6E6A'],
+    legend: {
+      icon: 'circle',
+      top: '2%',
+      right: 'center',
+      left: 'center',
+      itemWidth: 6,
+      itemGap: 20,
+      textStyle: {
+        color: '#556677'
+      }
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '10%',
+      containLabel: true
+    },
+    dataZoom: [// 滚动条
+      {
+        type: 'slider',
+        realtime: true,
+        startValue: 0, // 重点
+        // 重点-dataX.length表示x轴数据长度
+        endValue: lineData.value.xAxisData.length - (lineData.value.xAxisData.length - 4),
+        xAxisIndex: [0],
+        bottom: '10',
+        left: '30',
+        height: 8,
+        borderColor: 'rgba(0,0,0,0)',
+        textStyle: {
+          color: '#999',
+        },
+        zoomLock: true // 锁定
+      },
+    ],
+    tooltip: {
+      trigger: 'axis'
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: lineData.value.xAxisData
+    },
+    yAxis: {
+      type: 'value',
+      name: '单位 : 人'
+    },
+    series: lineData.value.seriesData
+  };
+  lineChart.setOption(option);
+  //监听窗口变动实时渲染
+  window.addEventListener("resize", function () {
+    lineChart.resize();
   });
 }
 
@@ -423,7 +536,7 @@ const handlePickerConfirm = (value: any, index: number) => {
 
     tbody {
       tr:nth-child(odd) {
-        background: #f5f4f4;
+        background: #F6F8FA;
       }
     }
   }
@@ -431,6 +544,11 @@ const handlePickerConfirm = (value: any, index: number) => {
   .charts-pie {
     width: 100%;
     height: 400px;
+  }
+
+  .charts-line {
+    width: 100%;
+    height: 300px;
   }
 }
 </style>

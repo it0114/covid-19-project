@@ -100,14 +100,7 @@ const cityShowPicker = ref(false) // 选择城市弹出框
 const cityColumns = ref([]) // 城市列表
 const cityDefaultAction = ref(0) // 默认选中
 const bulletinBoardData = ref([]) // 看板数据
-const pieData = ref([  // 饼图数据
-  {value: 1048, name: '本土现有确诊'},
-  {value: 735, name: '现有确诊'},
-  {value: 580, name: '累计确诊'},
-  {value: 484, name: '无症状感染者'},
-  {value: 300, name: '境外输入'},
-  {value: 300, name: '累计死亡'}
-])
+const pieData = ref([]) // 饼图数据
 let pieChart = <any>''
 
 // 请求地址
@@ -117,7 +110,7 @@ onMounted(async () => {
   await getList()
   await renderCityListData()
   await renderBulletinBoardData()
-  await chartsPieInit()
+  await renderPieData()
 })
 
 // 函数方法
@@ -212,7 +205,20 @@ const renderBulletinBoardData = () => {
   ]
 }
 
-// 初始化饼图数据
+// 渲染饼图数据
+const renderPieData = async () => {
+  (pieData.value as any) = [
+    {value: listData.chinaTotal.localConfirm, name: '本土现有确诊'},
+    {value: listData.chinaTotal.nowConfirm, name: '现有确诊'},
+    {value: listData.chinaTotal.confirm, name: '累计确诊'},
+    {value: listData.chinaTotal.noInfect, name: '无症状感染者'},
+    {value: listData.chinaTotal.importedCase, name: '境外输入'},
+    {value: listData.chinaTotal.dead, name: '累计死亡'}
+  ]
+  await chartsPieInit()
+}
+
+// 初始化饼图
 const chartsPieInit = () => {
   if (pieChart !== '' && pieChart !== null && pieChart !== undefined) {
     echarts.dispose(document.querySelector('.charts-pie') as HTMLElement);
@@ -220,7 +226,7 @@ const chartsPieInit = () => {
   pieChart = echarts.init(document.querySelector('.charts-pie') as HTMLElement);
   let option = {
     legend: {
-      selectedMode: false, // 是否可以隐藏饼图对应的板块
+      selectedMode: true, // 是否可以隐藏饼图对应的板块
       top: '5%',//图例距离整个容器底部的距离
       left: 'center',//图例距离整个容器左边
       data: ['本土现有确诊', '现有确诊', '累计确诊', '无症状感染者', '境外输入', '累计死亡'],//图例文字内容
@@ -232,6 +238,11 @@ const chartsPieInit = () => {
         fontSize: 12,//图例文字字体大小
         color: '#8A90A3'//图例文字颜色
       },
+      // 默认隐藏/显示的图例
+      selected: {
+        '现有确诊': false,
+        '累计确诊': false
+      }
     },
     series: [
       {
@@ -275,7 +286,6 @@ const chartsPieInit = () => {
             fontSize: 24,
           },
         },
-
         labelLine: {
           show: false
         },
@@ -318,7 +328,6 @@ const getDefaultSelected = (myChart: any, option: Object) => {
     });
   });
 }
-
 
 // 点击选中城市
 const handlePickerConfirm = (value: any, index: number) => {

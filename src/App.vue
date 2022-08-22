@@ -225,6 +225,7 @@ const chartsPieInit = () => {
   }
   pieChart = echarts.init(document.querySelector('.charts-pie') as HTMLElement);
   let option = {
+    color: ['#6AB2F9', '#71D5B1', '#F9DE59', '#F1A25C', '#ED8166', '#9B93EB',],
     legend: {
       selectedMode: true, // 是否可以隐藏饼图对应的板块
       top: '5%',//图例距离整个容器底部的距离
